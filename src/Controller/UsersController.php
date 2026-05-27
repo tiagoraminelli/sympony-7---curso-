@@ -11,6 +11,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+# composer require knplabs/knp-paginator-bundle
+# Dependencia para crear las paginaciones en la vista de index, se puede usar para paginar cualquier consulta a la base de datos, no solo para usuarios
+use Knp\Component\Pager\PaginatorInterface;
+
+# para delimitar el número de paginas que se muestran en la vista ir a:
+# config/packages/knp_paginator.yaml
+// knp_paginator:
+//     page_range: 3
+//     template:
+//         pagination: '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig'
+
 #[Route('/users')]
 final class UsersController extends AbstractController
 {
@@ -20,19 +31,39 @@ final class UsersController extends AbstractController
      * Equivalente a: UserController@index en Laravel
      */
     #[Route(name: 'app_users_index', methods: ['GET'])]
-    public function index(UsersRepository $usersRepository): Response
-    {
-        // similar a: $users = User::all();
-        // return view('users.index', compact('users'));
+    public function index(
+        Request $request,
+        UsersRepository $usersRepository,
+        PaginatorInterface $paginator
+    ): Response {
 
-        //$users = $usersRepository->findByName('simpatico');
-        $users = $usersRepository->findByEmail('sympony@gmail.com');
+        $search = $request->query->get('search');
 
-        //$users = $usersRepository->findAll();
+        $query = $usersRepository
+            ->createQueryBuilder('u');
 
+        if ($search) {
+
+            $query
+                ->where('u.name LIKE :search')
+                ->orWhere('u.email LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        $query->orderBy('u.id', 'DESC');
+
+        // similar a: $users = User::paginate(10);
+
+        // El método paginate recibe la consulta, el número de página actual y el número de resultados por página, y devuelve un objeto de paginación que se puede usar en la vista para mostrar los usuarios paginados
+        $users = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            5
+        );
 
         return $this->render('users/index.html.twig', [
             'users' => $users,
+            'search' => $search,
         ]);
     }
 

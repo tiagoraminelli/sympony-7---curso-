@@ -18,12 +18,30 @@ class UsersRepository extends ServiceEntityRepository
 
     public function findByName(string $name): array
     {
+
+        // similar a: User::where('name', $name)->get(); en Laravel 13
+        // Esto lo toma Doctrine y lo convierte en SQL para buscar por el campo name en la tabla users
         return $this->createQueryBuilder('u')
             ->andWhere('u.name = :name')
             ->setParameter('name', $name)
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function findByNameQuery(string $name): array
+    {
+        //Llama a la base de datos con el EntityManager y ejecuta una consulta DQL (Doctrine Query Language) para buscar por el campo name en la tabla users
+        $entityManager = $this->getEntityManager();
+        // DQL es un lenguaje de consulta orientado a objetos que se traduce a SQL para interactuar con la base de datos
+        $query = $entityManager->createQuery(
+            // para hacer la consulta en SQL se referencia a la entidad Users y su alias u, no a la tabla users directamente
+            'SELECT u
+            FROM App\Entity\Users u
+            WHERE u.name = :name'
+        )->setParameter('name', $name);
+
+        return $query->getResult();
     }
 
     public function findByEmail(string $email): array

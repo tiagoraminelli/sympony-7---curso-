@@ -1,0 +1,116 @@
+{#
+    Vista: users/index.html.twig
+    Equivalente a: resources/views/users/index.blade.php en Laravel
+    Controlador: UsersController@index
+#}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Users index
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5">
+
+		<div class="d-flex justify-content-between align-items-center mb-4">
+			<h1 class="fw-bold">Users</h1>
+
+			{#
+							Similar a: <a href="{{ route('users.create') }}" class="btn btn-primary">
+							Genera la URL para crear un nuevo usuario
+						#}
+			<a href="{{ path('app_users_new') }}" class="btn btn-primary">
+				+ Create new
+			</a>
+		</div>
+
+		<div class="card shadow-sm border-0">
+			<div class="card-body">
+				<div class="table-responsive">
+					<table class="table table-hover align-middle">
+						<thead class="table-dark">
+							<tr>
+								<th>Id</th>
+								<th>Name</th>
+								<th>Email</th>
+								<th>Verified At</th>
+								<th>Password</th>
+								<th class="text-center">Actions</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							{#
+															Similar a: @foreach ($users as $user) en Laravel
+															Recorre todos los usuarios enviados desde el controlador
+														#}
+							{% for user in users %}
+								<tr>
+									<td>{{ user.id }}</td>
+
+									<td>
+										<span class="fw-semibold">
+											{{ user.name }}
+										</span>
+									</td>
+
+									<td>{{ user.email }}</td>
+
+									<td>
+										{#
+																					Similar a: @if($user->email_verified_at) en Laravel
+																					Muestra badge verde si está verificado, gris si no
+																				#}
+										{% if user.emailVerifiedAt %}
+											<span class="badge bg-success">
+												{{ user.emailVerifiedAt|date('Y-m-d H:i') }}
+											</span>
+										{% else %}
+											<span class="badge bg-secondary">
+												Not verified
+											</span>
+										{% endif %}
+									</td>
+
+									<td>
+										{# Muestra solo los primeros 15 caracteres de la contraseña #}
+										<code>{{ user.password|slice(0, 15) }}...</code>
+									</td>
+
+									<td
+										class="text-center">
+										{#
+																					Similar a: <a href="{{ route('users.show', $user->id) }}">
+																					Botón para ver detalles del usuario
+																				#}
+										<a href="{{ path('app_users_show', {'id': user.id}) }}" class="btn btn-sm btn-info text-white">
+											Show
+										</a>
+
+										{#
+																					Similar a: <a href="{{ route('users.edit', $user->id) }}">
+																					Botón para editar el usuario
+																				#}
+										<a href="{{ path('app_users_edit', {'id': user.id}) }}" class="btn btn-sm btn-warning">
+											Edit
+										</a>
+									</td>
+								</tr>
+								{#
+																Similar a: @empty en Laravel
+																Se ejecuta cuando no hay usuarios
+															#}
+							{% else %}
+								<tr>
+									<td colspan="6" class="text-center text-muted py-4">
+										No records found
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

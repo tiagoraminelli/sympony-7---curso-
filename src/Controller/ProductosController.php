@@ -6,6 +6,7 @@ use App\Entity\Productos;
 use App\Form\ProductosType;
 use App\Repository\ProductosRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,10 +16,38 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ProductosController extends AbstractController
 {
     #[Route(name: 'app_productos_index', methods: ['GET'])]
-    public function index(ProductosRepository $productosRepository): Response
-    {
+    public function index(
+        Request $request,
+        ProductosRepository $productosRepository,
+        PaginatorInterface $paginator
+    ): Response {
+        $search = $request->query->get('search');
+
+        $queryBuilder = $productosRepository->createQueryBuilder('p');
+
+        if ($search) {
+            $queryBuilder
+                ->where('p.nombre LIKE :search')
+                ->orWhere('p.descripcion LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        $queryBuilder->orderBy('p.id', 'DESC');
+
+        $productos = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            5
+        );
+
+        $breadcrumbs = [
+            ['label' => 'Productos', 'url' => '']
+        ];
+
         return $this->render('productos/index.html.twig', [
-            'productos' => $productosRepository->findAll(),
+            'productos' => $productos,
+            'breadcrumbs' => $breadcrumbs,
+            'search' => $search,
         ]);
     }
 
@@ -36,17 +65,29 @@ final class ProductosController extends AbstractController
             return $this->redirectToRoute('app_productos_index', [], Response::HTTP_SEE_OTHER);
         }
 
+        $breadcrumbs = [
+            ['label' => 'Productos', 'url' => $this->generateUrl('app_productos_index')],
+            ['label' => 'Crear Producto', 'url' => '']
+        ];
+
         return $this->render('productos/new.html.twig', [
             'producto' => $producto,
             'form' => $form,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
     #[Route('/{id}', name: 'app_productos_show', methods: ['GET'])]
     public function show(Productos $producto): Response
     {
+        $breadcrumbs = [
+            ['label' => 'Productos', 'url' => $this->generateUrl('app_productos_index')],
+            ['label' => 'Ver: ' . ($producto->getNombre() ?? $producto->getId()), 'url' => '']
+        ];
+
         return $this->render('productos/show.html.twig', [
             'producto' => $producto,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -62,16 +103,22 @@ final class ProductosController extends AbstractController
             return $this->redirectToRoute('app_productos_index', [], Response::HTTP_SEE_OTHER);
         }
 
+        $breadcrumbs = [
+            ['label' => 'Productos', 'url' => $this->generateUrl('app_productos_index')],
+            ['label' => 'Editar: ' . ($producto->getNombre() ?? $producto->getId()), 'url' => '']
+        ];
+
         return $this->render('productos/edit.html.twig', [
             'producto' => $producto,
             'form' => $form,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
     #[Route('/{id}', name: 'app_productos_delete', methods: ['POST'])]
     public function delete(Request $request, Productos $producto, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$producto->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $producto->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($producto);
             $entityManager->flush();
         }

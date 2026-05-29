@@ -1,35 +1,145 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<title>
-			{% block title %}Welcome!
-			{% endblock %}
-		</title>
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}Welcome!{% endblock %}
+    </title>
 
-		<link
-		rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
 
-		{# Bootstrap CSS CDN #}
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> {% block stylesheets %}{% endblock %}
+    {# Bootstrap CSS CDN #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-		{% block javascripts %}
-			{% block importmap %}
-				{{ importmap('app') }}
-			{% endblock %}
+    {% block stylesheets %}{% endblock %}
 
-			{# Bootstrap JS CDN #}
-			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-		{% endblock %}
+    {% block javascripts %}
+        {% block importmap %}
+            {{ importmap('app') }}
+        {% endblock %}
 
-		{% set frankenphpHotReload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-		{% if frankenphpHotReload %}
-			<meta name="frankenphp-hot-reload:url" content="{{ frankenphpHotReload }}">
-			<script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-			<script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
-		{% endif %}
-	</head>
+        {# Bootstrap JS CDN #}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-	<body class="bg-light"> {% block body %}{% endblock %}
-		</body>
-	</html>
+        {# Axios CDN - Librería para peticiones AJAX #}
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    {% endblock %}
+
+    {% set frankenphpHotReload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
+    {% if frankenphpHotReload %}
+        <meta name="frankenphp-hot-reload:url" content="{{ frankenphpHotReload }}">
+        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
+        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
+    {% endif %}
+</head>
+
+<body class="bg-light">
+
+    {# ============================================ #}
+    {# NAVBAR - Similar a Laravel #}
+    {# ============================================ #}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            {# Logo / Home #}
+            <a class="navbar-brand" href="{{ path('app_users_index') }}">
+                Proyecto Symfony 7
+            </a>
+
+            {# Botón toggle para móviles #}
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            {# Contenido del navbar #}
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {{ app.request.get('_route') starts with 'app_users_index' ? 'active' : '' }}"
+                           href="{{ path('app_users_index') }}">
+                            Usuarios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ app.request.get('_route') starts with 'app_productos_index' ? 'active' : '' }}"
+                           href="{{ path('app_productos_index') }}">
+                            Productos
+                        </a>
+                    </li>
+                </ul>
+
+                {# Información del usuario - Similar a @auth en Laravel #}
+                <ul class="navbar-nav">
+                    {% if app.user %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                             {{ app.user.name ?? app.user.email }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('app_users_show', {'id': app.user.id}) }}">
+                                        Mi Perfil
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="#">
+                                        Cerrar Sesión
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Registro</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {# ============================================ #}
+    {# BREADCRUMB - Similar a Laravel #}
+    {# ============================================ #}
+    <div class="container">
+        {# Solo muestra el breadcrumb si existe la variable 'breadcrumbs' #}
+        {% if breadcrumbs is defined and breadcrumbs|length > 0 %}
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    {# Breadcrumb por defecto: Home #}
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_users_index') }}">Inicio</a>
+                    </li>
+
+                    {# Recorre los breadcrumbs pasados desde el controlador #}
+                    {% for crumb in breadcrumbs %}
+                        {% if crumb.url %}
+                            <li class="breadcrumb-item">
+                                <a href="{{ crumb.url }}">{{ crumb.label }}</a>
+                            </li>
+                        {% else %}
+                            <li class="breadcrumb-item active" aria-current="page">
+                                {{ crumb.label }}
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+            </nav>
+        {% endif %}
+    </div>
+
+    {# ============================================ #}
+    {# CONTENIDO PRINCIPAL #}
+    {# ============================================ #}
+    <div class="container">
+        {% block body %}{% endblock %}
+    </div>
+
+    {# Bloque adicional para scripts personalizados al final del body #}
+    {% block scripts %}{% endblock %}
+
+</body>
+</html>

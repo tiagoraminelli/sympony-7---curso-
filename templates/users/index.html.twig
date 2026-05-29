@@ -45,6 +45,16 @@
 
 							</div>
 
+                            <div class="col-md-3">
+
+								<select name="verified" class="form-select form-select-lg rounded-0 border-secondary shadow-none">
+									<option value="">Todos los estados</option>
+									<option value="1" {{ verified == '1' ? 'selected' : '' }}>Verificados</option>
+									<option value="0" {{ verified == '0' ? 'selected' : '' }}>No verificados</option>
+								</select>
+
+							</div>
+
 							<div class="col-auto">
 
 								<button class="btn btn-dark rounded-0 px-4 h-100">

@@ -38,6 +38,7 @@ final class UsersController extends AbstractController
     ): Response {
 
         $search = $request->query->get('search');
+        $verified = $request->query->get('verified');
 
         $query = $usersRepository
             ->createQueryBuilder('u');
@@ -50,20 +51,33 @@ final class UsersController extends AbstractController
                 ->setParameter('search', '%' . $search . '%');
         }
 
+        if ($verified !== null && $verified !== '') {
+            if ($verified == '1') {
+                $query->andWhere('u.email_verified_at IS NOT NULL');
+            } elseif ($verified == '0') {
+                $query->andWhere('u.email_verified_at IS NULL');
+            }
+        }
+
         $query->orderBy('u.id', 'DESC');
 
-        // similar a: $users = User::paginate(10);
-
-        // El método paginate recibe la consulta, el número de página actual y el número de resultados por página, y devuelve un objeto de paginación que se puede usar en la vista para mostrar los usuarios paginados
         $users = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
             5
         );
 
+        $breadcrumbs = [
+            ['label' => 'Usuarios', 'url' => '']
+        ];
+
+        # renderiza la vista de index y le pasa la variable de usuarios, el valor de búsqueda y el estado de verificación para mantenerlos en el formulario
+
         return $this->render('users/index.html.twig', [
             'users' => $users,
             'search' => $search,
+            'verified' => $verified,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -75,29 +89,26 @@ final class UsersController extends AbstractController
     #[Route('/new', name: 'app_users_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // similar a: $user = new User();
         $user = new Users();
-
-        // similar a: $form = $this->createForm(UserType::class, $user);
         $form = $this->createForm(UsersType::class, $user);
-
-        // similar a: $form->handleRequest($request);
         $form->handleRequest($request);
 
-        // similar a: if ($form->isSubmitted() && $form->isValid())
         if ($form->isSubmitted() && $form->isValid()) {
-            // similar a: $user->save()
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // similar a: return redirect()->route('users.index');
             return $this->redirectToRoute('app_users_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        // similar a: return view('users.create', compact('form'));
+        $breadcrumbs = [
+            ['label' => 'Usuarios', 'url' => $this->generateUrl('app_users_index')],
+            ['label' => 'Crear Usuario', 'url' => '']
+        ];
+
         return $this->render('users/new.html.twig', [
             'user' => $user,
             'form' => $form,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -109,9 +120,14 @@ final class UsersController extends AbstractController
     #[Route('/{id}', name: 'app_users_show', methods: ['GET'])]
     public function show(Users $user): Response
     {
-        // similar a: return view('users.show', compact('user'));
+        $breadcrumbs = [
+            ['label' => 'Usuarios', 'url' => $this->generateUrl('app_users_index')],
+            ['label' => 'Ver: ' . $user->getName() ?? $user->getEmail(), 'url' => '']
+        ];
+
         return $this->render('users/show.html.twig', [
             'user' => $user,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -123,25 +139,24 @@ final class UsersController extends AbstractController
     #[Route('/{id}/edit', name: 'app_users_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Users $user, EntityManagerInterface $entityManager): Response
     {
-        // similar a: $form = $this->createForm(UserType::class, $user);
         $form = $this->createForm(UsersType::class, $user);
-
-        // similar a: $form->handleRequest($request);
         $form->handleRequest($request);
 
-        // similar a: if ($form->isSubmitted() && $form->isValid())
         if ($form->isSubmitted() && $form->isValid()) {
-            // similar a: $user->save()
             $entityManager->flush();
 
-            // similar a: return redirect()->route('users.index');
             return $this->redirectToRoute('app_users_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        // similar a: return view('users.edit', compact('user', 'form'));
+        $breadcrumbs = [
+            ['label' => 'Usuarios', 'url' => $this->generateUrl('app_users_index')],
+            ['label' => 'Editar: ' . ($user->getName() ?? $user->getEmail()), 'url' => '']
+        ];
+
         return $this->render('users/edit.html.twig', [
             'user' => $user,
             'form' => $form,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -153,14 +168,11 @@ final class UsersController extends AbstractController
     #[Route('/{id}', name: 'app_users_delete', methods: ['POST'])]
     public function delete(Request $request, Users $user, EntityManagerInterface $entityManager): Response
     {
-        // similar a: @csrf en Laravel, verifica el token CSRF
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->getPayload()->getString('_token'))) {
-            // similar a: $user->delete()
             $entityManager->remove($user);
             $entityManager->flush();
         }
 
-        // similar a: return redirect()->route('users.index');
         return $this->redirectToRoute('app_users_index', [], Response::HTTP_SEE_OTHER);
     }
 }

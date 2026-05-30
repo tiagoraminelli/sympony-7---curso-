@@ -35,6 +35,9 @@ class Productos
     #[ORM\Column(nullable: true)]
     private ?bool $activo = null;
 
+    #[ORM\ManyToOne(inversedBy: 'productos')]
+    private ?Categoria $categoria = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +123,18 @@ class Productos
     public function setActivo(?bool $activo): static
     {
         $this->activo = $activo;
+
+        return $this;
+    }
+
+    public function getCategoria(): ?Categoria
+    {
+        return $this->categoria;
+    }
+
+    public function setCategoria(?Categoria $categoria): static
+    {
+        $this->categoria = $categoria;
 
         return $this;
     }

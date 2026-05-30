@@ -1,10 +1,10 @@
 {#
-    Vista: productos/index.html.twig
+    Vista: categoria/index.html.twig
 #}
 
 {% extends 'base.html.twig' %}
 
-{% block title %}Productos
+{% block title %}Categorías
 {% endblock %}
 
 {% block body %}
@@ -17,16 +17,16 @@
 
 				<div>
 					<h1 class="display-6 fw-light text-dark mb-1" style="letter-spacing: -1px;">
-						Productos
+						Categorías
 					</h1>
 
 					<p class="text-secondary mb-0">
-						Manejo de productos registrados en el sistema
+						Manejo de categorías de productos
 					</p>
 				</div>
 
-				<a href="{{ path('app_productos_new') }}" class="btn btn-dark rounded-0 px-4 py-2">
-					Nuevo Producto
+				<a href="{{ path('app_categoria_new') }}" class="btn btn-dark rounded-0 px-4 py-2">
+					Nueva Categoría
 				</a>
 
 			</div>
@@ -35,25 +35,22 @@
 
 				<div class="card-body p-4 border-bottom bg-light">
 
-					<form method="GET" action="{{ path('app_productos_index') }}">
+					<form method="GET" action="{{ path('app_categoria_index') }}">
 
 						<div class="row g-2 align-items-center">
 
 							<div class="col">
 
-								<input type="text" name="search" value="{{ search }}" class="form-control form-control-lg rounded-0 border-secondary shadow-none" placeholder="Buscar por nombre o descripción...">
+								<input type="text" name="search" value="{{ search }}" class="form-control form-control-lg rounded-0 border-secondary shadow-none" placeholder="Buscar por nombre...">
 
 							</div>
 
 							<div class="col-md-3">
 
-								<select name="categoria" class="form-select form-select-lg rounded-0 border-secondary shadow-none">
-									<option value="">Todas las categorías</option>
-									{% for categoria in categorias %}
-										<option value="{{ categoria.id }}" {{ categoriaId == categoria.id ? 'selected' : '' }}>
-											{{ categoria.nombre }}
-										</option>
-									{% endfor %}
+								<select name="activo" class="form-select form-select-lg rounded-0 border-secondary shadow-none">
+									<option value="">Todos los estados</option>
+									<option value="1" {{ activo == '1' ? 'selected' : '' }}>Activos</option>
+									<option value="0" {{ activo == '0' ? 'selected' : '' }}>Inactivos</option>
 								</select>
 
 							</div>
@@ -68,7 +65,7 @@
 
 							<div class="col-auto">
 
-								<a href="{{ path('app_productos_index') }}" class="btn btn-outline-secondary rounded-0 px-4 h-100">
+								<a href="{{ path('app_categoria_index') }}" class="btn btn-outline-secondary rounded-0 px-4 h-100">
 									Limpiar
 								</a>
 
@@ -97,19 +94,15 @@
 								</th>
 
 								<th class="text-black fw-normal border-0 p-3">
-									Categoría
-								</th>
-
-								<th class="text-black fw-normal border-0 p-3">
-									Precio
-								</th>
-
-								<th class="text-black fw-normal border-0 p-3">
-									Stock
+									Descripción
 								</th>
 
 								<th class="text-black fw-normal border-0 p-3">
 									Estado
+								</th>
+
+								<th class="text-black fw-normal border-0 p-3">
+									Creado
 								</th>
 
 								<th class="text-black fw-normal border-0 p-3 text-end">
@@ -122,33 +115,25 @@
 
 						<tbody>
 
-							{% for producto in productos %}
+							{% for categorium in categorias %}
 
 								<tr class="border-top">
 
 									<td class="p-3 text-secondary">
-										#{{ producto.id }}
+										#{{ categorium.id }}
 									</td>
 
 									<td class="p-3 fw-medium text-dark">
-										{{ producto.nombre }}
+										{{ categorium.nombre }}
 									</td>
 
 									<td class="p-3 text-secondary">
-										{{ producto.categoria ? producto.categoria.nombre : 'Sin categoría' }}
-									</td>
-
-									<td class="p-3 text-secondary">
-										${{ producto.precio|number_format(2, ',', '.') }}
-									</td>
-
-									<td class="p-3 text-secondary">
-										{{ producto.stock }}
+										{{ categorium.descripcion }}
 									</td>
 
 									<td class="p-3">
 
-										{% if producto.activo %}
+										{% if categorium.activo %}
 
 											<span class="badge bg-dark rounded-0 px-3 py-2 fw-normal">
 												Activo
@@ -164,13 +149,17 @@
 
 									</td>
 
+									<td class="p-3 text-secondary">
+										{{ categorium.createdAt ? categorium.createdAt|date('Y-m-d') : '-' }}
+									</td>
+
 									<td class="p-3 text-end">
 
-										<a href="{{ path('app_productos_show', {'id': producto.id}) }}" class="btn btn-sm btn-light border rounded-0 px-3 me-2">
+										<a href="{{ path('app_categoria_show', {'id': categorium.id}) }}" class="btn btn-sm btn-light border rounded-0 px-3 me-2">
 											Ver
 										</a>
 
-										<a href="{{ path('app_productos_edit', {'id': producto.id}) }}" class="btn btn-sm btn-dark rounded-0 px-3">
+										<a href="{{ path('app_categoria_edit', {'id': categorium.id}) }}" class="btn btn-sm btn-dark rounded-0 px-3">
 											Editar
 										</a>
 
@@ -182,9 +171,9 @@
 
 								<tr>
 
-									<td colspan="7" class="text-center py-5 text-secondary">
+									<td colspan="6" class="text-center py-5 text-secondary">
 
-										No se encontraron productos
+										No se encontraron categorías
 
 									</td>
 
@@ -204,19 +193,19 @@
 
 						<small class="text-secondary">
 							Total:
-							{{ productos.getTotalItemCount }}
-							productos
+							{{ categorias.getTotalItemCount }}
+							categorías
 						</small>
 
 						<nav>
 
 							<ul class="pagination pagination-sm mb-0">
 
-								{% if productos.currentPageNumber > 1 %}
+								{% if categorias.currentPageNumber > 1 %}
 
 									<li class="page-item">
 
-										<a class="page-link rounded-0 text-dark shadow-none" href="{{ path('app_productos_index', { page: productos.currentPageNumber - 1, search: search, categoria: categoriaId }) }}">
+										<a class="page-link rounded-0 text-dark shadow-none" href="{{ path('app_categoria_index', { page: categorias.currentPageNumber - 1, search: search, activo: activo }) }}">
 
 											&laquo;
 
@@ -226,17 +215,17 @@
 
 								{% endif %}
 
-								{% set start = productos.currentPageNumber - 1 %}
-								{% set end = productos.currentPageNumber + 1 %}
+								{% set start = categorias.currentPageNumber - 1 %}
+								{% set end = categorias.currentPageNumber + 1 %}
 
 								{% if start < 1 %}
 									{% set start = 1 %}
 									{% set end = 3 %}
 								{% endif %}
 
-								{% if end > productos.pageCount %}
-									{% set end = productos.pageCount %}
-									{% set start = productos.pageCount - 2 %}
+								{% if end > categorias.pageCount %}
+									{% set end = categorias.pageCount %}
+									{% set start = categorias.pageCount - 2 %}
 								{% endif %}
 
 								{% if start < 1 %}
@@ -245,9 +234,9 @@
 
 								{% for page in start..end %}
 
-									<li class="page-item {{ page == productos.currentPageNumber ? 'active' : '' }}">
+									<li class="page-item {{ page == categorias.currentPageNumber ? 'active' : '' }}">
 
-										<a class="page-link rounded-0 shadow-none {{ page == productos.currentPageNumber ? 'bg-dark border-dark text-white' : 'text-dark' }}" href="{{ path('app_productos_index', { page: page, search: search, categoria: categoriaId }) }}">
+										<a class="page-link rounded-0 shadow-none {{ page == categorias.currentPageNumber ? 'bg-dark border-dark text-white' : 'text-dark' }}" href="{{ path('app_categoria_index', { page: page, search: search, activo: activo }) }}">
 
 											{{ page }}
 
@@ -257,11 +246,11 @@
 
 								{% endfor %}
 
-								{% if productos.currentPageNumber < productos.pageCount %}
+								{% if categorias.currentPageNumber < categorias.pageCount %}
 
 									<li class="page-item">
 
-										<a class="page-link rounded-0 text-dark shadow-none" href="{{ path('app_productos_index', { page: productos.currentPageNumber + 1, search: search, categoria: categoriaId }) }}">
+										<a class="page-link rounded-0 text-dark shadow-none" href="{{ path('app_categoria_index', { page: categorias.currentPageNumber + 1, search: search, activo: activo }) }}">
 
 											&raquo;
 

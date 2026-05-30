@@ -3,14 +3,17 @@
 namespace App\Controller;
 
 use App\Entity\Productos;
+
 use App\Form\ProductosType;
 use App\Repository\ProductosRepository;
+use App\Repository\CategoriaRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+
 
 #[Route('/productos')]
 final class ProductosController extends AbstractController
@@ -19,9 +22,11 @@ final class ProductosController extends AbstractController
     public function index(
         Request $request,
         ProductosRepository $productosRepository,
+        CategoriaRepository $categoriaRepository,
         PaginatorInterface $paginator
     ): Response {
         $search = $request->query->get('search');
+        $categoriaId = $request->query->get('categoria');
 
         $queryBuilder = $productosRepository->createQueryBuilder('p');
 
@@ -32,6 +37,12 @@ final class ProductosController extends AbstractController
                 ->setParameter('search', '%' . $search . '%');
         }
 
+        if ($categoriaId && $categoriaId !== '') {
+            $queryBuilder
+                ->andWhere('p.categoria = :categoriaId')
+                ->setParameter('categoriaId', $categoriaId);
+        }
+
         $queryBuilder->orderBy('p.id', 'DESC');
 
         $productos = $paginator->paginate(
@@ -39,6 +50,9 @@ final class ProductosController extends AbstractController
             $request->query->getInt('page', 1),
             5
         );
+
+        // Obtener todas las categorías para el select
+        $categorias = $categoriaRepository->findAll();
 
         $breadcrumbs = [
             ['label' => 'Productos', 'url' => '']
@@ -48,6 +62,8 @@ final class ProductosController extends AbstractController
             'productos' => $productos,
             'breadcrumbs' => $breadcrumbs,
             'search' => $search,
+            'categoriaId' => $categoriaId,
+            'categorias' => $categorias,
         ]);
     }
 

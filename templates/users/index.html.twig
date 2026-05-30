@@ -45,7 +45,7 @@
 
 							</div>
 
-                            <div class="col-md-3">
+							<div class="col-md-3">
 
 								<select name="verified" class="form-select form-select-lg rounded-0 border-secondary shadow-none">
 									<option value="">Todos los estados</option>
@@ -63,6 +63,14 @@
 
 							</div>
 
+							<div class="col-auto">
+
+								<a href="{{ path('app_users_index') }}" class="btn btn-outline-secondary rounded-0 px-4 h-100">
+									Limpiar
+								</a>
+
+							</div>
+
 						</div>
 
 					</form>
@@ -77,27 +85,27 @@
 
 							<tr class="bg-dark">
 
-								<th class="text-white fw-normal border-0 p-3">
+								<th class="text-black fw-normal border-0 p-3">
 									ID
 								</th>
 
-								<th class="text-white fw-normal border-0 p-3">
+								<th class="text-black fw-normal border-0 p-3">
 									Nombre
 								</th>
 
-								<th class="text-white fw-normal border-0 p-3">
+								<th class="text-black fw-normal border-0 p-3">
 									Email
 								</th>
 
-								<th class="text-white fw-normal border-0 p-3">
+								<th class="text-black fw-normal border-0 p-3">
 									Estado
 								</th>
 
-								<th class="text-white fw-normal border-0 p-3">
+								<th class="text-black fw-normal border-0 p-3">
 									Password
 								</th>
 
-								<th class="text-white fw-normal border-0 p-3 text-end">
+								<th class="text-black fw-normal border-0 p-3 text-end">
 									Acciones
 								</th>
 
@@ -244,12 +252,12 @@
 										{% for page in start..end %}
 
 											<li class="page-item
-																																							                        {{ page == users.currentPageNumber ? 'active' : '' }}">
+																																																																														                        {{ page == users.currentPageNumber ? 'active' : '' }}">
 
 												<a class="page-link rounded-0 shadow-none
-																																							                            {{ page == users.currentPageNumber
-																																							                                ? 'bg-dark border-dark text-white'
-																																							                                : 'text-dark' }}" href="{{ path('app_users_index', { page: page, search: search }) }}">
+																																																																														                            {{ page == users.currentPageNumber
+																																																																														                                ? 'bg-dark border-dark text-white'
+																																																																														                                : 'text-dark' }}" href="{{ path('app_users_index', { page: page, search: search }) }}">
 
 													{{ page }}
 

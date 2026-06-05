@@ -159,9 +159,13 @@
 											Ver
 										</a>
 
-										<a href="{{ path('app_categoria_edit', {'id': categorium.id}) }}" class="btn btn-sm btn-dark rounded-0 px-3">
+										<a href="{{ path('app_categoria_edit', {'id': categorium.id}) }}" class="btn btn-sm btn-dark rounded-0 px-3 me-2">
 											Editar
 										</a>
+
+										<button type="button" class="btn btn-sm btn-danger rounded-0 px-3" data-delete data-id="{{ categorium.id }}" data-name="{{ categorium.nombre }}" data-url="{{ path('app_categoria_delete', {'id': 'ID_PLACEHOLDER'}) }}" data-token="{{ csrf_token('delete' ~ categorium.id) }}">
+											Eliminar
+										</button>
 
 									</td>
 

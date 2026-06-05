@@ -163,9 +163,13 @@
 											Ver
 										</a>
 
-										<a href="{{ path('app_users_edit', {'id': user.id}) }}" class="btn btn-sm btn-dark rounded-0 px-3">
+										<a href="{{ path('app_users_edit', {'id': user.id}) }}" class="btn btn-sm btn-dark rounded-0 px-3 me-2">
 											Editar
 										</a>
+
+										<button type="button" class="btn btn-sm btn-danger rounded-0 px-3" data-delete data-id="{{ user.id }}" data-name="{{ user.name ?? user.email }}" data-url="{{ path('app_users_delete', {'id': 'ID_PLACEHOLDER'}) }}" data-token="{{ csrf_token('delete' ~ user.id) }}">
+											Eliminar
+										</button>
 
 									</td>
 
@@ -252,12 +256,12 @@
 										{% for page in start..end %}
 
 											<li class="page-item
-																																																																														                        {{ page == users.currentPageNumber ? 'active' : '' }}">
+																																																																																																								                        {{ page == users.currentPageNumber ? 'active' : '' }}">
 
 												<a class="page-link rounded-0 shadow-none
-																																																																														                            {{ page == users.currentPageNumber
-																																																																														                                ? 'bg-dark border-dark text-white'
-																																																																														                                : 'text-dark' }}" href="{{ path('app_users_index', { page: page, search: search }) }}">
+																																																																																																								                            {{ page == users.currentPageNumber
+																																																																																																								                                ? 'bg-dark border-dark text-white'
+																																																																																																								                                : 'text-dark' }}" href="{{ path('app_users_index', { page: page, search: search }) }}">
 
 													{{ page }}
 

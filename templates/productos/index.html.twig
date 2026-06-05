@@ -15,21 +15,33 @@
 
 			<div class="d-flex justify-content-between align-items-center mb-4">
 
-				<div>
-					<h1 class="display-6 fw-light text-dark mb-1" style="letter-spacing: -1px;">
-						Productos
-					</h1>
+    <div>
+        <h1 class="display-6 fw-light text-dark mb-1" style="letter-spacing: -1px;">
+            Productos
+        </h1>
 
-					<p class="text-secondary mb-0">
-						Manejo de productos registrados en el sistema
-					</p>
-				</div>
+        <p class="text-secondary mb-0">
+            Manejo de productos registrados en el sistema
+        </p>
+    </div>
 
-				<a href="{{ path('app_productos_new') }}" class="btn btn-dark rounded-0 px-4 py-2">
-					Nuevo Producto
-				</a>
+    <div class="d-flex gap-2">
 
-			</div>
+        <a href="{{ path('app_productos_bulk_update') }}"
+           class="btn btn-outline-secondary rounded-0 px-4 py-2">
+            <i class="bi bi-pencil-square"></i>
+            Edición Masiva
+        </a>
+
+        <a href="{{ path('app_productos_new') }}"
+           class="btn btn-dark rounded-0 px-4 py-2">
+            <i class="bi bi-plus-lg"></i>
+            Nuevo Producto
+        </a>
+    </div>
+
+</div>
+
 
 			<div class="card border-0 rounded-0 shadow-sm">
 
@@ -101,15 +113,15 @@
 								</th>
 
 								<th class="text-black fw-normal border-0 p-3">
+									Costo
+								</th>
+
+								<th class="text-black fw-normal border-0 p-3">
 									Precio
 								</th>
 
 								<th class="text-black fw-normal border-0 p-3">
 									Stock
-								</th>
-
-								<th class="text-black fw-normal border-0 p-3">
-									Estado
 								</th>
 
 								<th class="text-black fw-normal border-0 p-3 text-end">
@@ -130,15 +142,25 @@
 										#{{ producto.id }}
 									</td>
 
-									<td class="p-3 fw-medium text-dark">
-										{{ producto.nombre }}
+									<td class="p-3">
+										<div class="fw-medium text-dark">
+											{{ producto.nombre }}
+										</div>
+
+										<small class="text-muted">
+											{{ producto.descripcion }}
+										</small>
 									</td>
 
 									<td class="p-3 text-secondary">
 										{{ producto.categoria ? producto.categoria.nombre : 'Sin categoría' }}
 									</td>
 
-									<td class="p-3 text-secondary">
+									<td class="p-3 text-danger-emphasis">
+										${{ producto.precioCosto|number_format(2, ',', '.') }}
+									</td>
+
+									<td class="p-3 text-success-emphasis">
 										${{ producto.precio|number_format(2, ',', '.') }}
 									</td>
 
@@ -146,33 +168,19 @@
 										{{ producto.stock }}
 									</td>
 
-									<td class="p-3">
-
-										{% if producto.activo %}
-
-											<span class="badge bg-dark rounded-0 px-3 py-2 fw-normal">
-												Activo
-											</span>
-
-										{% else %}
-
-											<span class="badge bg-secondary rounded-0 px-3 py-2 fw-normal">
-												Inactivo
-											</span>
-
-										{% endif %}
-
-									</td>
-
 									<td class="p-3 text-end">
 
-										<a href="{{ path('app_productos_show', {'id': producto.id}) }}" class="btn btn-sm btn-light border rounded-0 px-3 me-2">
-											Ver
+										<a href="{{ path('app_productos_show', {'id': producto.id}) }}" class="text-primary me-3" title="Ver">
+											<i class="bi bi-eye"></i>
 										</a>
 
-										<a href="{{ path('app_productos_edit', {'id': producto.id}) }}" class="btn btn-sm btn-dark rounded-0 px-3">
-											Editar
+										<a href="{{ path('app_productos_edit', {'id': producto.id}) }}" class="text-warning me-3" title="Editar">
+											<i class="bi bi-pencil-square"></i>
 										</a>
+
+										<button type="button" class="btn btn-link text-danger p-0 m-0" style="border: none; background: none;" title="Eliminar" data-delete data-id="{{ producto.id }}" data-name="{{ producto.nombre }}" data-url="{{ path('app_productos_delete', {'id': 'ID_PLACEHOLDER'}) }}" data-token="{{ csrf_token('delete' ~ producto.id) }}">
+											<i class="bi bi-trash"></i>
+										</button>
 
 									</td>
 

@@ -15,12 +15,6 @@ class CategoriaType extends AbstractType
             ->add('nombre')
             ->add('descripcion')
             ->add('activo')
-            ->add('created_at', null, [
-                'widget' => 'single_text',
-            ])
-            ->add('updated_at', null, [
-                'widget' => 'single_text',
-            ])
         ;
     }
 

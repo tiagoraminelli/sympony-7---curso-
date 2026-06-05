@@ -63,6 +63,12 @@ final class CategoriaController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $categorium = new Categoria();
+        # Las fechas de creación y actualización se establecen automáticamente al crear una nueva categoría
+        $categorium->setCreatedAt(new \DateTimeImmutable());
+        $categorium->setUpdatedAt(new \DateTimeImmutable());
+
+        #Por defecto la categoría se crea como activa
+        $categorium->setActivo(true);
         $form = $this->createForm(CategoriaType::class, $categorium);
         $form->handleRequest($request);
 

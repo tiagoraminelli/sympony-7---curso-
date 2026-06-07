@@ -22,6 +22,8 @@ use Knp\Component\Pager\PaginatorInterface;
 //     template:
 //         pagination: '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig'
 
+// php bin/console debug:router para ver las rutas creadas en este controlador, se pueden usar los nombres de las rutas para generar URLs en las vistas o redirecciones
+
 #[Route('/users')]
 final class UsersController extends AbstractController
 {

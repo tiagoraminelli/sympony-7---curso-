@@ -45,8 +45,8 @@
 				class="container">
 				{# Logo / Home #}
 				<a class="navbar-brand" href="{{ path('app_users_index') }}">
-					Inventario
-				</a>
+    Inventario
+</a>
 
 				{# Botón toggle para móviles #}
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
@@ -71,6 +71,11 @@
 								Categorías
 							</a>
 						</li>
+                        <li class="nav-item">
+    <a class="nav-link {{ app.request.get('_route') starts with 'app_proveedores_index' ? 'active' : '' }}" href="{{ path('app_proveedores_index') }}">
+        Proveedores
+    </a>
+</li>
 					</ul>
 
 					{# Información del usuario - Similar a @auth en Laravel #}
@@ -118,8 +123,8 @@
 						class="breadcrumb">
 						{# Breadcrumb por defecto: Home #}
 						<li class="breadcrumb-item">
-							<a href="{{ path('app_users_index') }}">Inicio</a>
-						</li>
+    <a href="{{ path('app_home') }}">Inicio</a>
+</li>
 
 						{# Recorre los breadcrumbs pasados desde el controlador #}
 						{% for crumb in breadcrumbs %}

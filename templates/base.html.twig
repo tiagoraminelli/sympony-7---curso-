@@ -66,6 +66,16 @@
 								Productos
 							</a>
 						</li>
+
+                       <li class="nav-item">
+    <a class="nav-link {{ app.request.get('_route') starts with 'app_presupuestos_index' ? 'active' : '' }}" href="{{ path('app_presupuestos_index') }}">
+        Presupuestos
+    </a>
+</li>
+
+
+
+
 						<li class="nav-item">
 							<a class="nav-link {{ app.request.get('_route') starts with 'app_categoria_index' ? 'active' : '' }}" href="{{ path('app_categoria_index') }}">
 								Categorías
@@ -76,6 +86,7 @@
         Proveedores
     </a>
 </li>
+
 					</ul>
 
 					{# Información del usuario - Similar a @auth en Laravel #}

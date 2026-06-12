@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UsersRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -36,6 +38,17 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
+
+    /**
+     * @var Collection<int, Presupuestos>
+     */
+    #[ORM\OneToMany(targetEntity: Presupuestos::class, mappedBy: 'usuario')]
+    private Collection $presupuestos;
+
+    public function __construct()
+    {
+        $this->presupuestos = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -133,5 +146,35 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->email;
+    }
+
+    /**
+     * @return Collection<int, Presupuestos>
+     */
+    public function getPresupuestos(): Collection
+    {
+        return $this->presupuestos;
+    }
+
+    public function addPresupuesto(Presupuestos $presupuesto): static
+    {
+        if (!$this->presupuestos->contains($presupuesto)) {
+            $this->presupuestos->add($presupuesto);
+            $presupuesto->setUsuario($this);
+        }
+
+        return $this;
+    }
+
+    public function removePresupuesto(Presupuestos $presupuesto): static
+    {
+        if ($this->presupuestos->removeElement($presupuesto)) {
+            // set the owning side to null (unless already changed)
+            if ($presupuesto->getUsuario() === $this) {
+                $presupuesto->setUsuario(null);
+            }
+        }
+
+        return $this;
     }
 }

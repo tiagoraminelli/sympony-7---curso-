@@ -38,6 +38,15 @@ class Productos
     #[ORM\ManyToOne(inversedBy: 'productos')]
     private ?Categoria $categoria = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $codigo_barra = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $created_at = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updated_at = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -135,6 +144,42 @@ class Productos
     public function setCategoria(?Categoria $categoria): static
     {
         $this->categoria = $categoria;
+
+        return $this;
+    }
+
+    public function getCodigoBarra(): ?string
+    {
+        return $this->codigo_barra;
+    }
+
+    public function setCodigoBarra(?string $codigo_barra): static
+    {
+        $this->codigo_barra = $codigo_barra;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $created_at): static
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updated_at): static
+    {
+        $this->updated_at = $updated_at;
 
         return $this;
     }

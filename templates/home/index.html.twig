@@ -93,6 +93,24 @@
         </div>
 
         <div class="col-md-3">
+    <div class="card border-0 shadow-sm rounded-0">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-secondary small">
+                        Presupuestos
+                    </div>
+                    <h2 class="mb-0 fw-light">
+                        {{ totalPresupuestos ?? 0 }}
+                    </h2>
+                </div>
+                <i class="bi bi-file-text fs-1 text-secondary"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <div class="col-md-3">
             <div class="card border-0 shadow-sm rounded-0">
                 <div class="card-body p-4">
 
@@ -246,6 +264,10 @@
                            class="btn btn-outline-dark rounded-0">
                             Nuevo Usuario
                         </a>
+
+                        <a href="{{ path('app_presupuestos_new') }}" class="btn btn-outline-dark rounded-0">
+    Nuevo Presupuesto
+</a>
 
                     </div>
 

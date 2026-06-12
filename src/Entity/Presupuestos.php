@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PresupuestosRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -49,7 +51,16 @@ class Presupuestos
     #[ORM\Column]
     private ?\DateTimeImmutable $updated_at = null;
 
-    // Getters y setters con tipos correctos
+    /**
+     * @var Collection<int, PresupuestosDetalle>
+     */
+    #[ORM\OneToMany(targetEntity: PresupuestosDetalle::class, mappedBy: 'presupuesto', cascade: ['persist', 'remove'])]
+    private Collection $detalles;
+
+    public function __construct()
+    {
+        $this->detalles = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -174,6 +185,35 @@ class Presupuestos
     public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PresupuestosDetalle>
+     */
+    public function getDetalles(): Collection
+    {
+        return $this->detalles;
+    }
+
+    public function addDetalle(PresupuestosDetalle $detalle): static
+    {
+        if (!$this->detalles->contains($detalle)) {
+            $this->detalles->add($detalle);
+            $detalle->setPresupuesto($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDetalle(PresupuestosDetalle $detalle): static
+    {
+        if ($this->detalles->removeElement($detalle)) {
+            if ($detalle->getPresupuesto() === $this) {
+                $detalle->setPresupuesto(null);
+            }
+        }
+
         return $this;
     }
 }

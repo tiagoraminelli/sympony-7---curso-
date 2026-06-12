@@ -17,6 +17,15 @@ use Symfony\Component\Security\Core\Security;
 #[Route('/presupuestos')]
 final class PresupuestosController extends AbstractController
 {
+
+    #[Route('/{id}/print', name: 'app_presupuestos_print', methods: ['GET'])]
+    public function print(Presupuestos $presupuesto): Response
+    {
+        return $this->render('presupuestos/print.html.twig', [
+            'presupuesto' => $presupuesto,
+        ]);
+    }
+
     #[Route(name: 'app_presupuestos_index', methods: ['GET'])]
     public function index(
         Request $request,

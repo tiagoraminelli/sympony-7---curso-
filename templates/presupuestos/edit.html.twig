@@ -78,20 +78,20 @@
 
                         <div class="col-md-6 mb-4">
 
-                            {{ form_label(form.fecha, null, {
+                            {{ form_label(form.usuario, null, {
                             'label_attr': {
                                 'class': 'form-label fw-semibold text-dark small text-uppercase'
                             }
                         }) }}
 
-                            {{ form_widget(form.fecha, {
+                            {{ form_widget(form.usuario, {
                             'attr': {
-                                'class': 'form-control form-control-lg rounded-0 border-secondary shadow-none'
+                                'class': 'form-select form-select-lg rounded-0 border-secondary shadow-none'
                             }
                         }) }}
 
                             <div class="text-danger small mt-1">
-                                {{ form_errors(form.fecha) }}
+                                {{ form_errors(form.usuario) }}
                             </div>
 
                         </div>
@@ -116,14 +116,13 @@
 
                         </div>
 
+                        {#
                         <div class="col-md-6 mb-4">
-
                             {{ form_label(form.subtotal, null, {
                             'label_attr': {
                                 'class': 'form-label fw-semibold text-dark small text-uppercase'
                             }
                         }) }}
-
                             {{ form_widget(form.subtotal, {
                             'attr': {
                                 'class': 'form-control form-control-lg rounded-0 border-secondary shadow-none',
@@ -131,21 +130,17 @@
                                 'step': '0.01'
                             }
                         }) }}
-
                             <div class="text-danger small mt-1">
                                 {{ form_errors(form.subtotal) }}
                             </div>
-
                         </div>
 
                         <div class="col-md-6 mb-4">
-
                             {{ form_label(form.descuento, null, {
                             'label_attr': {
                                 'class': 'form-label fw-semibold text-dark small text-uppercase'
                             }
                         }) }}
-
                             {{ form_widget(form.descuento, {
                             'attr': {
                                 'class': 'form-control form-control-lg rounded-0 border-secondary shadow-none',
@@ -153,12 +148,11 @@
                                 'step': '0.01'
                             }
                         }) }}
-
                             <div class="text-danger small mt-1">
                                 {{ form_errors(form.descuento) }}
                             </div>
-
                         </div>
+                        #}
 
                         <div class="col-md-12 mb-4">
 

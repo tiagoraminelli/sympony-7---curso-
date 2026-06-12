@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProductosRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -47,6 +49,17 @@ class Productos
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
+    /**
+     * @var Collection<int, PresupuestosDetalle>
+     */
+    #[ORM\OneToMany(targetEntity: PresupuestosDetalle::class, mappedBy: 'producto')]
+    private Collection $presupuestosDetalles;
+
+    public function __construct()
+    {
+        $this->presupuestosDetalles = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,7 +73,6 @@ class Productos
     public function setNombre(?string $nombre): static
     {
         $this->nombre = $nombre;
-
         return $this;
     }
 
@@ -72,7 +84,6 @@ class Productos
     public function setDescripcion(?string $descripcion): static
     {
         $this->descripcion = $descripcion;
-
         return $this;
     }
 
@@ -84,7 +95,6 @@ class Productos
     public function setPrecio(string $precio): static
     {
         $this->precio = $precio;
-
         return $this;
     }
 
@@ -96,7 +106,6 @@ class Productos
     public function setPrecioCosto(?string $precio_costo): static
     {
         $this->precio_costo = $precio_costo;
-
         return $this;
     }
 
@@ -108,7 +117,6 @@ class Productos
     public function setStock(string $stock): static
     {
         $this->stock = $stock;
-
         return $this;
     }
 
@@ -120,7 +128,6 @@ class Productos
     public function setImagen(?string $imagen): static
     {
         $this->imagen = $imagen;
-
         return $this;
     }
 
@@ -132,7 +139,6 @@ class Productos
     public function setActivo(?bool $activo): static
     {
         $this->activo = $activo;
-
         return $this;
     }
 
@@ -144,7 +150,6 @@ class Productos
     public function setCategoria(?Categoria $categoria): static
     {
         $this->categoria = $categoria;
-
         return $this;
     }
 
@@ -156,7 +161,6 @@ class Productos
     public function setCodigoBarra(?string $codigo_barra): static
     {
         $this->codigo_barra = $codigo_barra;
-
         return $this;
     }
 
@@ -168,7 +172,6 @@ class Productos
     public function setCreatedAt(?\DateTimeImmutable $created_at): static
     {
         $this->created_at = $created_at;
-
         return $this;
     }
 
@@ -180,6 +183,34 @@ class Productos
     public function setUpdatedAt(?\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PresupuestosDetalle>
+     */
+    public function getPresupuestosDetalles(): Collection
+    {
+        return $this->presupuestosDetalles;
+    }
+
+    public function addPresupuestosDetalle(PresupuestosDetalle $presupuestosDetalle): static
+    {
+        if (!$this->presupuestosDetalles->contains($presupuestosDetalle)) {
+            $this->presupuestosDetalles->add($presupuestosDetalle);
+            $presupuestosDetalle->setProducto($this);
+        }
+
+        return $this;
+    }
+
+    public function removePresupuestosDetalle(PresupuestosDetalle $presupuestosDetalle): static
+    {
+        if ($this->presupuestosDetalles->removeElement($presupuestosDetalle)) {
+            if ($presupuestosDetalle->getProducto() === $this) {
+                $presupuestosDetalle->setProducto(null);
+            }
+        }
 
         return $this;
     }

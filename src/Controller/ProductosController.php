@@ -18,7 +18,6 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/productos')]
 final class ProductosController extends AbstractController
 {
-
     #[Route('/bulk-fetch', name: 'app_productos_bulk_fetch', methods: ['GET'])]
     public function bulkFetch(
         Request $request,
